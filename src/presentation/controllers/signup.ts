@@ -4,15 +4,13 @@ import { badRequest } from '../helpers/http-helper'
 
 export class SignUpController {
   handle (httpRequest: httpRequest): httpResponse {
-    if (!httpRequest.body.name) {
-      return badRequest(new MissingParamError('name'))
-    } else if (!httpRequest.body.email) {
-      return badRequest(new MissingParamError('email'))
-    } else {
-      return {
-        statusCode: 200,
-        body: 'Ok'
+    const requiredFields = ['name', 'email', 'password']
+    let error: any
+    requiredFields.forEach((field) => {
+      if (!httpRequest.body[field]) {
+        error = badRequest(new MissingParamError(field))
       }
-    }
+    })
+    return error || { statusCode: 200, body: 'Ok' }
   }
 }
